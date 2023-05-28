@@ -114,11 +114,7 @@ function removeItemOnce(arr, value) {
     return arr;
 }
 
-function removeAll(arr) {
-    for (let i = 0; i < arr.length; i++) {
-        arr.splice(i,1)
-    }
-}
+
 function setDomain(cell) {
     let row = cell.row
     let col = cell.col
@@ -195,11 +191,4 @@ function chooseCell() {
 
 function forwardChecking(cell) {
     return setDomain(cell)
-}
-
-function countNonZero() {
-    for (let i = 0 ; i < Math.pow(CONSTANT.GRID_SIZE,2);i++) {
-        if (main_cells[i].value === 0)
-            return false
-    }
 }

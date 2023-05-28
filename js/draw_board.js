@@ -1,6 +1,5 @@
 const puzzle = document.querySelector('.main-sudoku-grid')
 
-// grid-template-columns: repeat(9, auto);
 export function drawBoard(number) {
     const cells = [];
     let square = number*number;
