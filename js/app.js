@@ -2,6 +2,7 @@ import {drawBoard} from "./draw_board.js";
 import {sudokuGen, sudokuCheck} from "./sudoku.js";
 import {addToInputs} from "./load_board.js";
 import {backtracking,CSP,solve1} from "./solve.js";
+import {containsOnlyNumbers} from "./regex.js";
 
 document.querySelector('#dark-mode-toggle').addEventListener('click', () => {
     document.body.classList.toggle('dark');
@@ -212,32 +213,16 @@ document.querySelector('#btn-level').addEventListener('click', (e) => {
 
 
 document.querySelector('#btn-play').addEventListener('click', () => {
-    if (name_input.value.trim().length > 0) {
+    if (name_input.value.trim().length > 0 && containsOnlyNumbers(grid_size.value) && grid_size.value > 3 && grid_size.value < 15) {
         initSudoku();
         startGame();
     } else {
         name_input.classList.add('input-err');
+        grid_size.classList.add('input-err')
         setTimeout(() => {
             name_input.classList.remove('input-err');
+            grid_size.classList.remove('input-err')
             name_input.focus();
         }, 500);
     }
 });
-
-const init = () => {
-    const darkmode = JSON.parse(localStorage.getItem('darkmode'));
-    document.body.classList.add(darkmode ? 'dark' : 'light');
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', darkmode ? '#1a1a2e' : '#fff');
-
-    const game = getGameInfo();
-
-    document.querySelector('#btn-continue').style.display = game ? 'grid' : 'none';
-
-    if (getPlayerName()) {
-        name_input.value = getPlayerName();
-    } else {
-        name_input.focus();
-    }
-}
-
-init()
