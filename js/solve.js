@@ -44,7 +44,6 @@ export function backtracking(board) {
 }
 
 let main_cells = []
-let maxCount = 0
 export function solve1(board) {
     main_cells = []
     for (let i = 0 ; i < Math.pow(CONSTANT.GRID_SIZE,2); i++) {
@@ -63,6 +62,7 @@ export function CSP(board) {
     }else {
 
         setMapDomain()
+        setMapDegree()
         let next = chooseCell()
         let row = next.getRow()
         let col = next.getCol()
