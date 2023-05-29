@@ -23,7 +23,6 @@ const result_screen = document.querySelector('#result-screen');
 
 // Button
 const solve = document.getElementById('solve-btn');
-const clear = document.getElementById('clear-btn')
 const load = document.getElementById('load-btn')
 // ----------
 
@@ -67,14 +66,12 @@ const resetBg = () => {
     cells.forEach(e => e.classList.remove('hover'));
 }
 
-let test;
 const initSudoku = () => {
     // clear old sudoku
     clearSudoku();
     resetBg();
     // generate sudoku puzzle here
     su = sudokuGen(level);
-    test = [...su.original]
     su_answer = [...su.question];
 
     seconds = 0;
@@ -111,14 +108,6 @@ const saveGameInfo = () => {
 const removeGameInfo = () => {
     localStorage.removeItem('game');
     document.querySelector('#btn-continue').style.display = 'none';
-}
-
-const isGameWin = (sudoku) => sudokuCheck(sudoku);
-
-const showResult = () => {
-    clearInterval(timer);
-    result_screen.classList.add('active');
-    result_time.innerHTML = showTime(seconds);
 }
 
 const returnStartScreen = () => {
@@ -181,28 +170,23 @@ solve.addEventListener('click', () => {
         if (solve1(su_answer)) {
             addToInputs(su_answer)
             console.log('solved by CSP')
+            pause = true
+            flag = false
         }
         else {
             backtracking(temp)
             addToInputs(temp)
             console.log('solved by backtrack')
+            pause = true
+            flag = false
         }
     }
 });
 
-
-clear.addEventListener('click', () => {
-    if (flag) {
-        clearSudoku()
-        flag = false;
-    }
-})
-
 load.addEventListener('click', () => {
-    if (!flag) {
         initSudoku()
         flag = true;
-    }
+        pause = false
 })
 
 document.querySelector('#btn-level').addEventListener('click', (e) => {
