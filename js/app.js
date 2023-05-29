@@ -32,8 +32,6 @@ const player_name = document.querySelector('#player-name');
 const game_level = document.querySelector('#game-level');
 const game_time = document.querySelector('#game-time');
 
-const result_time = document.querySelector('#result-time');
-
 let level_index = 0;
 let level = CONSTANT.LEVEL[level_index];
 
@@ -46,9 +44,7 @@ let su_answer = undefined;
 
 // ------------
 
-const getGameInfo = () => JSON.parse(localStorage.getItem('game'));
 const setPlayerName = (name) => localStorage.setItem('player_name', name);
-const getPlayerName = () => localStorage.getItem('player_name');
 
 const showTime = (seconds) => new Date(seconds * 1000).toISOString().substr(11, 8);
 
@@ -105,10 +101,6 @@ const saveGameInfo = () => {
     localStorage.setItem('game', JSON.stringify(game));
 }
 
-const removeGameInfo = () => {
-    localStorage.removeItem('game');
-    document.querySelector('#btn-continue').style.display = 'none';
-}
 
 const returnStartScreen = () => {
     clearInterval(timer);
