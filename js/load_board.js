@@ -14,7 +14,6 @@ export function addToInputs(sudoku) {
         } else {
             inputs[i].innerHTML = savedBoard[i]
             inputs[i].setAttribute('data-value', `${savedBoard[i]}`)
-            inputs[i].classList.add('filled')
         }
     }
     savedBoard = []
