@@ -1,5 +1,6 @@
 import {isSafe, sudokuCheck} from "./sudoku.js";
 import {Cell} from "./cell.js";
+import {addToInputs} from "./load_board.js";
 let degrees = []
 export function backtracking(board) {
 
@@ -44,65 +45,61 @@ export function backtracking(board) {
 }
 
 let main_cells = []
+let count = 0;
+let count1 = 0;
+let next ;
 export function solve1(board) {
     main_cells = []
+
     for (let i = 0 ; i < Math.pow(CONSTANT.GRID_SIZE,2); i++) {
         let row = Math.floor(i / CONSTANT.GRID_SIZE);
         let col = i % CONSTANT.GRID_SIZE;
         main_cells.push(new Cell(board[row][col], row, col))
     }
 
-    setMapDomain()
-    return CSP(board)
+    next = chooseCell()
+    next.setIsFirst(true)
+    count = 0
+    console.log(next)
+    return CSP(board, next)
 }
-export function CSP(board) {
-    if (sudokuCheck(board)){
-        console.log('yes')
+export function CSP(board, cell) {
+    if (sudokuCheck(board)) {
         return true
-    }else {
+    }
 
-        setMapDomain()
-        setMapDegree()
-        let next = chooseCell()
-        let row = next.getRow()
-        let col = next.getCol()
+    let row = cell.getRow()
+    let col = cell.getCol()
 
-
-        if (next.getMrv().length === 0){
-            console.log('mrv length')
-            return false
-        }
-
-        if (row === -1 || col === -1) {
-            if (sudokuCheck(board)){
-                console.log('complete')
-                console.log(board)
-                return true
-            } else {
-                console.log('col = -1')
-                return false
-            }
-        }
-
-        next.getMrv().forEach(value => {
-            if (isSafe(board, row, col, value)) {
-                board[row][col] = value
-                main_cells[row * CONSTANT.GRID_SIZE + col] = new Cell(value, row, col)
-                if (CSP(board)) {
-                    forwardChecking(next)
-                } else {
-                    board[row][col] = 0
-                }
-            }
-
-
-        })
-        if (sudokuCheck(board))
-            return true
-        console.log('function')
+    if (row === -1 || col === -1)
         return false
 
+
+    cell.getMrv().forEach(value => {
+        if (isSafe(board, row, col, value)) {
+            board[row][col] = value
+            count++
+            main_cells[row * CONSTANT.GRID_SIZE + col].setValue(value)
+            if (CSP(board, chooseCell())) {
+                return true
+            } else {
+                count--
+                board[row][col] = 0
+                main_cells[row * CONSTANT.GRID_SIZE + col].setValue(0)
+            }
+        }
+        })
+    if (count === 0) {
+        next = chooseCell()
+        next.setIsFirst(true)
+        console.log(next)
+        console.log(main_cells)
+        if (count1 ++  > 10)
+            return false
+        // return CSP(board,next)
     }
+    return !! sudokuCheck(board)
+
 }
 
 
@@ -135,15 +132,21 @@ function setDomain(cell) {
             if (main_cells[j * number + col].getMrv().length === 0 && main_cells[j * number + col].value === 0)
                 return false
         }
+    } else {
+        cell.mrv = []
     }
     return true
 }
 
 function setMapDomain() {
     let x;
-    for (let i = 0 ; i < Math.pow(CONSTANT.GRID_SIZE,2); i++)
-        x = setDomain(main_cells[i])
-    return x;
+    for (let i = 0 ; i < Math.pow(CONSTANT.GRID_SIZE,2); i++) {
+        if (main_cells[i].value === 0) {
+            main_cells[i].calculateMrv()
+            x = setDomain(main_cells[i])
+        }
+    }
+    return x
 }
 
 
@@ -169,6 +172,7 @@ function degree(cell) {
 }
 
 function setMapDegree() {
+    degrees = []
     for (let k = 0 ; k < Math.pow(CONSTANT.GRID_SIZE,2); k++)
         degrees.push(0)
     for (let i = 0 ; i < Math.pow(CONSTANT.GRID_SIZE,2); i++)
@@ -176,19 +180,20 @@ function setMapDegree() {
     return degrees
 }
 function chooseCell() {
+    setMapDomain()
     let mux_degree_cells = setMapDegree()
     let min_mrv_cell = new Cell(0,-1,-1)
     for (let i = 0 ; i < Math.pow(CONSTANT.GRID_SIZE,2);i++){
         if (main_cells[i].getMrv().length === min_mrv_cell.getMrv().length
-            && mux_degree_cells[i] > min_mrv_cell[min_mrv_cell.getRow()*CONSTANT.GRID_SIZE + min_mrv_cell.getCol()] ) {
+            && mux_degree_cells[i] > mux_degree_cells[min_mrv_cell.getRow()*CONSTANT.GRID_SIZE + min_mrv_cell.getCol()]
+            && !main_cells[i].getIsFirst() && main_cells[i].value === 0) {
             min_mrv_cell = main_cells[i]
         }
-        if (main_cells[i].getMrv().length < min_mrv_cell.getMrv().length && main_cells[i].getMrv().length !== 0)
+        if (main_cells[i].getMrv().length < min_mrv_cell.getMrv().length &&
+            main_cells[i].getMrv().length !== 0 && main_cells[i].value === 0  && !main_cells[i].getIsFirst())
             min_mrv_cell = main_cells[i]
     }
+
     return min_mrv_cell
 }
 
-function forwardChecking(cell) {
-    return setDomain(cell)
-}
