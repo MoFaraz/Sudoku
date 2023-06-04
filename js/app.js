@@ -156,9 +156,21 @@ document.querySelector('#btn-new-game-2').addEventListener('click', () => {
 const cells = drawBoard(CONSTANT.GRID_SIZE)
 let flag = true;
 
+let temp1 = [
+    [0,0,0,0,0,0,0,0,2],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,8,0,0,0,0,0,0],
+    [0,0,0,0,0,8,6,0,0],
+    [0,0,0,9,0,0,0,0,0],
+    [0,0,0,0,0,0,0,8,0],
+    [0,0,0,0,0,0,7,0,0],
+    [0,0,0,0,0,0,0,0,0]
+]
 solve.addEventListener('click', () => {
     let temp = structuredClone(su_answer)
     if (flag) {
+
         if (solve1(su_answer)) {
             addToInputs(su_answer)
             console.log('solved by CSP')
